@@ -1,0 +1,98 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+struct Process {
+    int id;          
+    int burstTime;   
+    int arrivalTime; 
+    int completionTime;
+    int turnaroundTime;
+    int waitingTime;
+};
+
+// FCFS Scheduling Algorithm
+void FCFS(Process processes[], int n) {
+    int currentTime = 0;
+
+    // Calculate completion time, turnaround time, and waiting time for FCFS
+    for (int i = 0; i < n; i++) {
+        processes[i].completionTime = currentTime + processes[i].burstTime;
+        processes[i].turnaroundTime = processes[i].completionTime - processes[i].arrivalTime;
+        processes[i].waitingTime = processes[i].turnaroundTime - processes[i].burstTime;
+        currentTime = processes[i].completionTime;
+    }
+
+    // Output results for FCFS
+    cout << "----------------- FCFS -----------------\n";
+    cout << "Process ID | Waiting Time | Turnaround Time\n";
+    for (int i = 0; i < n; i++) {
+        cout << "    " << processes[i].id << "       |    " << processes[i].waitingTime
+             << "       |     " << processes[i].turnaroundTime << "\n";
+    }
+
+    // Calculate and print average waiting time and turnaround time
+    int totalWaitingTime = 0;
+    int totalTurnaroundTime = 0;
+    for (int i = 0; i < n; i++) {
+        totalWaitingTime += processes[i].waitingTime;
+        totalTurnaroundTime += processes[i].turnaroundTime;
+    }
+    cout << "Average Waiting Time: " << (float)totalWaitingTime / n << "\n";
+    cout << "Average Turnaround Time: " << (float)totalTurnaroundTime / n << "\n";
+}
+
+// SJF Scheduling Algorithm (Non-preemptive)
+void SJF(Process processes[], int n) {
+    // Sort processes by burst time
+    sort(processes, processes + n, [](Process a, Process b) {
+        return a.burstTime < b.burstTime;
+    });
+
+    int currentTime = 0;
+
+    // Calculate completion time, turnaround time, and waiting time for SJF
+    for (int i = 0; i < n; i++) {
+        processes[i].completionTime = currentTime + processes[i].burstTime;
+        processes[i].turnaroundTime = processes[i].completionTime - processes[i].arrivalTime;
+        processes[i].waitingTime = processes[i].turnaroundTime - processes[i].burstTime;
+        currentTime = processes[i].completionTime;
+    }
+
+    // Output results for SJF
+    cout << "----------------- SJF -----------------\n";
+    cout << "Process ID | Waiting Time | Turnaround Time\n";
+    for (int i = 0; i < n; i++) {
+        cout << "    " << processes[i].id << "       |    " << processes[i].waitingTime
+             << "       |     " << processes[i].turnaroundTime << "\n";
+    }
+
+    // Calculate and print average waiting time and turnaround time
+    int totalWaitingTime = 0, totalTurnaroundTime = 0;
+    for (int i = 0; i < n; i++) {
+        totalWaitingTime += processes[i].waitingTime;
+        totalTurnaroundTime += processes[i].turnaroundTime;
+    }
+    cout << "Average Waiting Time: " << (float)totalWaitingTime / n << "\n";
+    cout << "Average Turnaround Time: " << (float)totalTurnaroundTime / n << "\n";
+}
+
+int main() {
+    // Create processes with burst times and initialize other properties
+    int n = 5;
+    Process processes[n];
+
+    processes[0] = {1, 2, 0, 0, 0, 0};
+    processes[1] = {2, 1, 0, 0, 0, 0};
+    processes[2] = {3, 8, 0, 0, 0, 0};
+    processes[3] = {4, 4, 0, 0, 0, 0};
+    processes[4] = {5, 5, 0, 0, 0, 0};
+
+    // Apply FCFS and SJF scheduling algorithms
+    FCFS(processes, n);
+    cout << endl;
+    SJF(processes, n);
+
+    return 0;
+}
+
